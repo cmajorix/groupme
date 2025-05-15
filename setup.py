@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='groupme',
-    version='0.1.0',
+    version='0.1.1',
     author='Lily Groth',
     author_email='groth@u.northwestern.edu',
     description='A Python wrapper for the GroupMe API',

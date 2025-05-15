@@ -1,6 +1,6 @@
 import requests
 from typing import Optional, List, Union
-from attachments import Location, GroupMeImage
+from .attachments import Location, GroupMeImage
 
 
 class GroupMeBot:
@@ -99,7 +99,7 @@ class GroupMeBot:
             json=payload,
         )
 
-        if res.status_code != 201:
+        if res.status_code >= 300:
             raise Exception(f"Failed to create bot: {res.status_code} {res.text}")
 
         bot = res.json()
@@ -118,10 +118,8 @@ class GroupMeBot:
 def get_bots(access_token):
     res = requests.get("https://api.groupme.com/v3/bots?token=" + access_token)
 
-    if res.status_code != 200:
+    if res.status_code >= 300:
         raise Exception(f"Failed to get bots: {res.status_code} {res.text}")
-
-    print(res.json())
 
     return [
         GroupMeBot(
