@@ -69,7 +69,7 @@ class GroupMeBot:
             "https://api.groupme.com/v3/bots/post?token=" + self.access_token,
             json=payload,
         )
-        if res.status_code != 201:
+        if res.status_code >= 300:
             raise Exception(f"Failed to send message: {res.status_code} {res.text}")
 
     @classmethod
