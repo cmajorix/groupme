@@ -1,5 +1,6 @@
 import requests
 
+
 class Location:
     """
     A class representing a location attachment for GroupMe.
@@ -50,15 +51,19 @@ class GroupMeImage:
 
     @classmethod
     def from_url(cls, url: str, access_token: str):
-        img_data = requests.get(url).raw.data
+        img_res = requests.get(url, stream=True)
+
         res = requests.post(
             "https://image.groupme.com/pictures",
-            headers={f"X-Access-Token": access_token},
-            data=img_data,
+            headers={
+                "X-Access-Token": access_token,
+            },
+            data=img_res.content
         )
-        if res.status_code != 200:
+        if res.status_code >= 300:
             raise Exception(f"Failed to upload image: {res.status_code} {res.text}")
-        return GroupMeImage(res.json()["payload"]["url"])
+        print(res.json())
+        return cls(res.json()["payload"]["url"])
 
     def dict(self):
         """
@@ -66,7 +71,4 @@ class GroupMeImage:
 
         :return: Dictionary representation of the GroupMeImage.
         """
-        return {
-            "type": "image",
-            "url": self.large
-        }
+        return {"type": "image", "url": self.large}

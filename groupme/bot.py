@@ -14,6 +14,7 @@ class GroupMeBot:
         bot_id: str,
         name: str,
         group_id: str,
+        group_name: str,
         dm_notification: bool,
         active: bool,
         avatar_url: str,
@@ -36,6 +37,7 @@ class GroupMeBot:
         self.bot_id = bot_id
         self.name = name
         self.group_id = group_id
+        self.group_name = group_name
         self.dm_notification = dm_notification
         self.active = active
         self.avatar_url = avatar_url
@@ -86,28 +88,29 @@ class GroupMeBot:
         payload = {
             "name": name,
             "group_id": group_id,
-            "dm_notification": dm_notification,
-            "active": active,
+            # "dm_notification": dm_notification,
+            # "active": active
         }
-        if avatar_url is not None:
-            payload["avatar_url"] = avatar_url
-        if callback_url is not None:
-            payload["callback_url"] = callback_url
+        # if avatar_url is not None:
+        #     payload["avatar_url"] = avatar_url
+        # if callback_url is not None:
+        #     payload["callback_url"] = callback_url
 
         res = requests.post(
-            "https://api.groupme.com/v3/bots/create?token=" + access_token,
-            json=payload,
+            "https://api.groupme.com/v3/bots?token=" + access_token,
+            json={"bot": payload},
         )
 
         if res.status_code >= 300:
             raise Exception(f"Failed to create bot: {res.status_code} {res.text}")
 
         bot = res.json()
-        return GroupMeBot(
+        return cls(
             access_token,
-            bot["response"]["bot_id"],
+            bot["response"]["bot"]["bot_id"],
             name,
             group_id,
+            bot["response"]["bot"]["group_name"],
             dm_notification,
             active,
             avatar_url,
@@ -127,6 +130,7 @@ def get_bots(access_token):
             bot["bot_id"],
             bot["name"],
             bot["group_id"],
+            bot["group_name"],
             bot["dm_notification"],
             bot["active"],
             bot["avatar_url"],
